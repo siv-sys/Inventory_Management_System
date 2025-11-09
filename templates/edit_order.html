@@ -1,0 +1,397 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Order - Inventory System{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50 py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header Section -->
+        <div class="mb-8">
+            <div class="bg-gradient-to-r from-green-600 to-emerald-600 rounded-2xl shadow-xl p-8 mb-6 text-white">
+                <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
+                    <div class="flex items-center">
+                        <div class="bg-white/20 p-4 rounded-2xl mr-6 backdrop-blur-sm">
+                            <i class="fas fa-edit text-white text-3xl"></i>
+                        </div>
+                        <div>
+                            <h1 class="text-4xl font-bold mb-2">Edit Order</h1>
+                            <p class="text-green-100 text-lg">Update order #{{ order.order_id }} details and information</p>
+                        </div>
+                    </div>
+                    <div class="flex space-x-3">
+                        <a href="{{ url_for('recent_orders') }}" 
+                           class="bg-white/20 hover:bg-white/30 text-white px-8 py-4 rounded-xl transition-all duration-300 flex items-center backdrop-blur-sm border border-white/20 hover:border-white/30">
+                            <i class="fas fa-arrow-left mr-3"></i>
+                            Back to Orders
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Order Form -->
+        <div class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+            <form id="orderForm" method="POST" class="p-8">
+                <!-- Customer Information -->
+                <div class="mb-12">
+                    <div class="flex items-center mb-8">
+                        <div class="bg-gradient-to-r from-blue-500 to-blue-600 p-3 rounded-xl mr-4 shadow-lg">
+                            <i class="fas fa-user text-white text-xl"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-2xl font-bold text-gray-900">Customer Information</h2>
+                            <p class="text-gray-500 mt-1">Update customer details and contact information</p>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
+                        <div class="space-y-6">
+                            <div class="form-group">
+                                <label class="block text-sm font-semibold text-gray-700 mb-3">
+                                    <i class="fas fa-user-circle mr-2 text-blue-600"></i>
+                                    Customer Name <span class="text-red-500">*</span>
+                                </label>
+                                <input type="text" id="customerName" name="customerName" required
+                                       value="{{ order.customer_name }}"
+                                       class="w-full px-4 py-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 hover:border-gray-300">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="block text-sm font-semibold text-gray-700 mb-3">
+                                    <i class="fas fa-envelope mr-2 text-blue-600"></i>
+                                    Email Address <span class="text-red-500">*</span>
+                                </label>
+                                <input type="email" id="customerEmail" name="customerEmail" required
+                                       value="{{ order.customer_email }}"
+                                       class="w-full px-4 py-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 hover:border-gray-300">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="block text-sm font-semibold text-gray-700 mb-3">
+                                    <i class="fas fa-phone mr-2 text-blue-600"></i>
+                                    Phone Number
+                                </label>
+                                <input type="tel" id="customerPhone" name="customerPhone"
+                                       value="{{ order.customer_phone or '' }}"
+                                       class="w-full px-4 py-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 hover:border-gray-300"
+                                       placeholder="+1 (555) 123-4567">
+                            </div>
+                        </div>
+
+                        <div class="space-y-6">
+                            <div class="form-group">
+                                <label class="block text-sm font-semibold text-gray-700 mb-3">
+                                    <i class="fas fa-users mr-2 text-blue-600"></i>
+                                    Customer Type
+                                </label>
+                                <select id="customerType" name="customerType"
+                                        class="w-full px-4 py-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 hover:border-gray-300 appearance-none cursor-pointer bg-white">
+                                    <option value="Regular" {% if order.customer_type == 'Regular' %}selected{% endif %}>👤 Regular Customer</option>
+                                    <option value="VIP" {% if order.customer_type == 'VIP' %}selected{% endif %}>⭐ VIP Customer</option>
+                                    <option value="Wholesale" {% if order.customer_type == 'Wholesale' %}selected{% endif %}>🏢 Wholesale</option>
+                                    <option value="First-time" {% if order.customer_type == 'First-time' %}selected{% endif %}>🎯 First-time Customer</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="block text-sm font-semibold text-gray-700 mb-3">
+                                    <i class="fas fa-truck mr-2 text-blue-600"></i>
+                                    Shipping Address
+                                </label>
+                                <textarea id="shippingAddress" name="shippingAddress" rows="4"
+                                          class="w-full px-4 py-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 hover:border-gray-300 resize-none"
+                                          placeholder="Enter complete shipping address...">{{ order.shipping_address or '' }}</textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Order Details -->
+                <div class="mb-12">
+                    <div class="flex items-center mb-8">
+                        <div class="bg-gradient-to-r from-purple-500 to-purple-600 p-3 rounded-xl mr-4 shadow-lg">
+                            <i class="fas fa-clipboard-list text-white text-xl"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-2xl font-bold text-gray-900">Order Details</h2>
+                            <p class="text-gray-500 mt-1">Update order status, tracking, and payment information</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8">
+                        <div class="form-group">
+                            <label class="block text-sm font-semibold text-gray-700 mb-3">
+                                <i class="fas fa-calendar-alt mr-2 text-purple-600"></i>
+                                Order Date <span class="text-red-500">*</span>
+                            </label>
+                            <input type="date" id="orderDate" name="orderDate" required
+                                   value="{{ order.order_date.strftime('%Y-%m-%d') }}"
+                                   class="w-full px-4 py-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 hover:border-gray-300">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="block text-sm font-semibold text-gray-700 mb-3">
+                                <i class="fas fa-flag mr-2 text-purple-600"></i>
+                                Status <span class="text-red-500">*</span>
+                            </label>
+                            <select id="orderStatus" name="orderStatus" required
+                                    class="w-full px-4 py-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 hover:border-gray-300 appearance-none cursor-pointer bg-white">
+                                <option value="Pending" {% if order.status == 'Pending' %}selected{% endif %}>🟡 Pending</option>
+                                <option value="Confirmed" {% if order.status == 'Confirmed' %}selected{% endif %}>🟠 Confirmed</option>
+                                <option value="Processing" {% if order.status == 'Processing' %}selected{% endif %}>🔵 Processing</option>
+                                <option value="Shipped" {% if order.status == 'Shipped' %}selected{% endif %}>🚚 Shipped</option>
+                                <option value="Delivered" {% if order.status == 'Delivered' %}selected{% endif %}>🟢 Delivered</option>
+                                <option value="Cancelled" {% if order.status == 'Cancelled' %}selected{% endif %}>🔴 Cancelled</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="block text-sm font-semibold text-gray-700 mb-3">
+                                <i class="fas fa-credit-card mr-2 text-purple-600"></i>
+                                Payment Method
+                            </label>
+                            <select id="paymentMethod" name="paymentMethod"
+                                    class="w-full px-4 py-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 hover:border-gray-300 appearance-none cursor-pointer bg-white">
+                                <option value="Credit Card" {% if order.payment_method == 'Credit Card' %}selected{% endif %}>💳 Credit Card</option>
+                                <option value="PayPal" {% if order.payment_method == 'PayPal' %}selected{% endif %}>📧 PayPal</option>
+                                <option value="Bank Transfer" {% if order.payment_method == 'Bank Transfer' %}selected{% endif %}>🏦 Bank Transfer</option>
+                                <option value="Cash" {% if order.payment_method == 'Cash' %}selected{% endif %}>💵 Cash</option>
+                                <option value="Other" {% if order.payment_method == 'Other' %}selected{% endif %}>🔶 Other</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="block text-sm font-semibold text-gray-700 mb-3">
+                                <i class="fas fa-dollar-sign mr-2 text-purple-600"></i>
+                                Amount ($) <span class="text-red-500">*</span>
+                            </label>
+                            <div class="relative">
+                                <span class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 font-semibold">$</span>
+                                <input type="number" id="orderAmount" name="orderAmount" required step="0.01" min="0"
+                                       value="{{ order.amount }}"
+                                       class="w-full px-4 py-4 pl-10 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 hover:border-gray-300">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="block text-sm font-semibold text-gray-700 mb-3">
+                                <i class="fas fa-barcode mr-2 text-purple-600"></i>
+                                Tracking Number
+                            </label>
+                            <input type="text" id="trackingNumber" name="trackingNumber"
+                                   value="{{ order.tracking_number or '' }}"
+                                   class="w-full px-4 py-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 hover:border-gray-300"
+                                   placeholder="Enter tracking number">
+                        </div>
+                    </div>
+
+                    <div class="mt-6">
+                        <div class="form-group">
+                            <label class="block text-sm font-semibold text-gray-700 mb-3">
+                                <i class="fas fa-sticky-note mr-2 text-purple-600"></i>
+                                Order Notes
+                            </label>
+                            <textarea id="orderNotes" name="orderNotes" rows="4"
+                                      class="w-full px-4 py-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 hover:border-gray-300 resize-none"
+                                      placeholder="Add any special instructions or notes for this order...">{{ order.notes or '' }}</textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Order Summary -->
+                <div class="mb-8 p-6 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl border-2 border-blue-200">
+                    <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center">
+                        <i class="fas fa-info-circle mr-3 text-blue-600"></i>
+                        Order Summary
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-blue-600">{{ order.order_id }}</div>
+                            <div class="text-sm text-gray-600">Order ID</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-green-600">${{ "%.2f"|format(order.amount) }}</div>
+                            <div class="text-sm text-gray-600">Total Amount</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-purple-600">{{ order.order_date.strftime('%b %d, %Y') }}</div>
+                            <div class="text-sm text-gray-600">Order Date</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-2xl font-bold 
+                                {% if order.status == 'Delivered' %}text-green-600
+                                {% elif order.status == 'Pending' %}text-yellow-600
+                                {% elif order.status == 'Processing' %}text-blue-600
+                                {% elif order.status == 'Shipped' %}text-indigo-600
+                                {% else %}text-gray-600{% endif %}">
+                                {{ order.status }}
+                            </div>
+                            <div class="text-sm text-gray-600">Current Status</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="flex flex-col lg:flex-row justify-end space-y-4 lg:space-y-0 lg:space-x-6 pt-8 border-t-2 border-gray-200">
+                    <a href="{{ url_for('recent_orders') }}" 
+                       class="px-8 py-4 text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-xl transition-all duration-300 flex items-center justify-center border-2 border-gray-300 font-semibold hover:border-gray-400">
+                        <i class="fas fa-times mr-3"></i>
+                        Cancel Changes
+                    </a>
+                    <button type="submit" 
+                            class="px-8 py-4 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white rounded-xl transition-all duration-300 flex items-center justify-center font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                        <i class="fas fa-save mr-3"></i>
+                        Update Order
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Success Modal -->
+<div id="successModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center hidden z-50">
+    <div class="bg-white rounded-2xl p-8 max-w-md mx-4 shadow-2xl transform transition-all duration-300">
+        <div class="text-center">
+            <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <i class="fas fa-check-circle text-green-600 text-3xl"></i>
+            </div>
+            <h3 class="text-2xl font-bold text-gray-900 mb-3">Order Updated Successfully!</h3>
+            <p class="text-gray-600 mb-2">Order <span class="font-semibold">{{ order.order_id }}</span> has been updated.</p>
+            <p class="text-gray-500 text-sm mb-6">All changes have been saved to the system.</p>
+            <div class="flex flex-col sm:flex-row justify-center space-y-3 sm:space-y-0 sm:space-x-4">
+                <a href="{{ url_for('edit_order', order_id=order.id) }}" 
+                   class="px-6 py-3 text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-xl transition-all duration-300 flex items-center justify-center border-2 border-gray-300 font-medium">
+                    <i class="fas fa-edit mr-2"></i>
+                    Continue Editing
+                </a>
+                <a href="{{ url_for('recent_orders') }}" 
+                   class="px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-xl transition-all duration-300 flex items-center justify-center font-medium shadow-lg hover:shadow-xl">
+                    <i class="fas fa-list mr-2"></i>
+                    View All Orders
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Loading Overlay -->
+<div id="loadingOverlay" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center hidden z-50">
+    <div class="bg-white rounded-2xl p-8 flex flex-col items-center shadow-2xl transform transition-all duration-300">
+        <div class="w-16 h-16 border-4 border-green-200 border-t-green-600 rounded-full animate-spin mb-4"></div>
+        <p class="text-gray-800 font-semibold text-lg mb-2">Updating Order...</p>
+        <p class="text-gray-600 text-sm">Please wait while we save your changes</p>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Show success modal if there's a success message
+    document.addEventListener('DOMContentLoaded', function() {
+        // Check if we should show success modal (you can set this via Flask flash messages)
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('success') === 'true') {
+            document.getElementById('successModal').classList.remove('hidden');
+        }
+
+        // Add loading state to form submission
+        document.getElementById('orderForm').addEventListener('submit', function(e) {
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            loadingOverlay.classList.remove('hidden');
+            
+            // You can add any client-side validation here if needed
+            if (!validateForm()) {
+                e.preventDefault();
+                loadingOverlay.classList.add('hidden');
+                return;
+            }
+        });
+    });
+
+    function closeSuccessModal() {
+        document.getElementById('successModal').classList.add('hidden');
+    }
+
+    function validateForm() {
+        let isValid = true;
+        
+        // Validate required fields
+        const requiredFields = document.querySelectorAll('[required]');
+        requiredFields.forEach(field => {
+            if (!field.value.trim()) {
+                isValid = false;
+                field.classList.add('border-red-500', 'border-2');
+                field.classList.remove('border-gray-200');
+                
+                // Add error animation
+                field.style.animation = 'shake 0.5s ease-in-out';
+                setTimeout(() => {
+                    field.style.animation = '';
+                }, 500);
+            } else {
+                field.classList.remove('border-red-500');
+                field.classList.add('border-gray-200');
+            }
+        });
+
+        // Validate amount is positive
+        const amountField = document.getElementById('orderAmount');
+        if (amountField.value && parseFloat(amountField.value) < 0) {
+            isValid = false;
+            amountField.classList.add('border-red-500', 'border-2');
+            amountField.classList.remove('border-gray-200');
+            
+            // Show error notification
+            showNotification('Order amount cannot be negative', 'error');
+        }
+
+        return isValid;
+    }
+
+    function showNotification(message, type = 'info') {
+        const notification = document.createElement('div');
+        const bgColor = type === 'error' ? 'bg-red-500' : 'bg-blue-500';
+        notification.className = `fixed top-4 right-4 ${bgColor} text-white px-6 py-4 rounded-xl shadow-lg z-50 transform transition-all duration-300`;
+        notification.innerHTML = `
+            <div class="flex items-center">
+                <i class="fas fa-${type === 'error' ? 'exclamation-triangle' : 'info-circle'} mr-3"></i>
+                <span class="font-medium">${message}</span>
+            </div>
+        `;
+        document.body.appendChild(notification);
+        
+        // Animate in
+        setTimeout(() => {
+            notification.style.transform = 'translateX(0)';
+        }, 100);
+        
+        // Remove after 5 seconds
+        setTimeout(() => {
+            notification.style.transform = 'translateX(100%)';
+            setTimeout(() => notification.remove(), 300);
+        }, 5000);
+    }
+
+    // Add shake animation for errors
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+    `;
+    document.head.appendChild(style);
+</script>
+
+<style>
+    select {
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236B7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+        background-position: right 1rem center;
+        background-repeat: no-repeat;
+        background-size: 1.5em 1.5em;
+        padding-right: 3rem;
+    }
+</style>
+{% endblock %}

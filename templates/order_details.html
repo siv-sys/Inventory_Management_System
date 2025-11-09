@@ -1,0 +1,439 @@
+{% extends "base.html" %}
+
+{% block title %}Order Details - Inventory System{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <!-- Header -->
+    <div class="flex justify-between items-center">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-900">Order Details</h1>
+            <p class="text-gray-600 mt-1">Complete information for order {{ order.order_id }}</p>
+        </div>
+        <div class="flex space-x-4">
+            <a href="#"
+                class="bg-gray-600 text-white px-6 py-3 rounded-lg hover:bg-gray-700 transition-colors flex items-center">
+                <i class="fas fa-arrow-left mr-2"></i>
+                Back to Orders
+            </a>
+            <button onclick="printOrder()"
+                class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors flex items-center">
+                <i class="fas fa-print mr-2"></i>
+                Print Order
+                </a>
+        </div>
+    </div>
+
+    <!-- Order Summary Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <!-- Order Status Card -->
+        <div class="bg-white rounded-xl shadow p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-gray-900">Order Status</h3>
+                <div class="p-2 bg-blue-100 rounded-lg">
+                    <i class="fas fa-flag text-blue-600"></i>
+                </div>
+            </div>
+            <span class="px-4 py-2 text-lg font-medium rounded-full 
+                {% if order.status == 'Delivered' %}bg-green-100 text-green-800
+                {% elif order.status == 'Pending' %}bg-yellow-100 text-yellow-800
+                {% elif order.status == 'Confirmed' %}bg-orange-100 text-orange-800
+                {% elif order.status == 'Processing' %}bg-purple-100 text-purple-800
+                {% elif order.status == 'Shipped' %}bg-blue-100 text-blue-800
+                {% elif order.status == 'Cancelled' %}bg-red-100 text-red-800
+                {% else %}bg-gray-100 text-gray-800{% endif %}">
+                {{ order.status }}
+            </span>
+        </div>
+
+        <!-- Order Amount Card -->
+        <div class="bg-white rounded-xl shadow p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-gray-900">Total Amount</h3>
+                <div class="p-2 bg-green-100 rounded-lg">
+                    <i class="fas fa-dollar-sign text-green-600"></i>
+                </div>
+            </div>
+            <p class="text-2xl font-bold text-gray-900">${{ "%.2f"|format(order.amount) }}</p>
+        </div>
+
+        <!-- Order Date Card -->
+        <div class="bg-white rounded-xl shadow p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-gray-900">Order Date</h3>
+                <div class="p-2 bg-purple-100 rounded-lg">
+                    <i class="fas fa-calendar text-purple-600"></i>
+                </div>
+            </div>
+            <p class="text-lg font-medium text-gray-900">{{ order.order_date.strftime('%b %d, %Y') }}</p>
+            <p class="text-sm text-gray-500">{{ order.order_date.strftime('%I:%M %p') }}</p>
+        </div>
+
+        <!-- Customer Card -->
+        <div class="bg-white rounded-xl shadow p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-gray-900">Customer</h3>
+                <div class="p-2 bg-orange-100 rounded-lg">
+                    <i class="fas fa-user text-orange-600"></i>
+                </div>
+            </div>
+            <p class="text-lg font-medium text-gray-900">{{ order.customer_name }}</p>
+            <p class="text-sm text-gray-500">{{ order.customer_email }}</p>
+        </div>
+    </div>
+
+    <!-- Main Content Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Left Column - Order Items -->
+        <div class="lg:col-span-2 space-y-6">
+            <!-- Order Items -->
+            <div class="bg-white rounded-xl shadow">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <h2 class="text-lg font-semibold text-gray-900">Order Items</h2>
+                </div>
+                <div class="p-6">
+                    <div class="space-y-4">
+                        {% if order.items %}
+                        {% for item in order.items %}
+                        <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-box text-blue-600"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-medium text-gray-900">{{ item.product_name }}</h4>
+                                    <p class="text-sm text-gray-500">SKU: {{ item.sku }}</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <p class="font-medium text-gray-900">${{ "%.2f"|format(item.unit_price) }}</p>
+                                <p class="text-sm text-gray-500">Qty: {{ item.quantity }}</p>
+                                <p class="text-sm font-medium text-gray-900">Total: ${{ "%.2f"|format(item.unit_price *
+                                    item.quantity) }}</p>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        {% else %}
+                        <!-- Sample items for demonstration -->
+                        <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-laptop text-blue-600"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-medium text-gray-900">Premium Laptop</h4>
+                                    <p class="text-sm text-gray-500">SKU: LT-001</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <p class="font-medium text-gray-900">$999.99</p>
+                                <p class="text-sm text-gray-500">Qty: 1</p>
+                                <p class="text-sm font-medium text-gray-900">Total: $999.99</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-mouse text-green-600"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-medium text-gray-900">Wireless Mouse</h4>
+                                    <p class="text-sm text-gray-500">SKU: MS-005</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <p class="font-medium text-gray-900">$29.99</p>
+                                <p class="text-sm text-gray-500">Qty: 2</p>
+                                <p class="text-sm font-medium text-gray-900">Total: $59.98</p>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Order Summary -->
+                    <div class="mt-6 pt-6 border-t border-gray-200">
+                        <div class="space-y-2">
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Subtotal</span>
+                                <span class="font-medium">${{ "%.2f"|format(order.amount * 0.85) }}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Tax (15%)</span>
+                                <span class="font-medium">${{ "%.2f"|format(order.amount * 0.15) }}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Shipping</span>
+                                <span class="font-medium">$0.00</span>
+                            </div>
+                            <div class="flex justify-between text-lg font-bold pt-2 border-t border-gray-200">
+                                <span>Total</span>
+                                <span>${{ "%.2f"|format(order.amount) }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Shipping Information -->
+            <div class="bg-white rounded-xl shadow">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <h2 class="text-lg font-semibold text-gray-900">Shipping Information</h2>
+                </div>
+                <div class="p-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <h3 class="font-medium text-gray-900 mb-3">Shipping Address</h3>
+                            <div class="text-gray-600 space-y-1">
+                                <p>{{ order.customer_name }}</p>
+                                <p>123 Main Street</p>
+                                <p>Suite 100</p>
+                                <p>New York, NY 10001</p>
+                                <p>United States</p>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="font-medium text-gray-900 mb-3">Shipping Method</h3>
+                            <div class="text-gray-600 space-y-1">
+                                <p class="font-medium">Standard Shipping</p>
+                                <p>Estimated delivery: 3-5 business days</p>
+                                <p class="text-sm text-green-600">Free Shipping</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column - Actions & Timeline -->
+        <div class="space-y-6">
+            <!-- Quick Actions -->
+            <div class="bg-white rounded-xl shadow">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <h2 class="text-lg font-semibold text-gray-900">Quick Actions</h2>
+                </div>
+                <div class="p-6 space-y-3">
+                    <button onclick="updateOrderStatus('{{ order.id }}', 'Processing')"
+                        class="w-full px-4 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors flex items-center justify-center">
+                        <i class="fas fa-cog mr-2"></i>
+                        Mark as Processing
+                    </button>
+                    <button onclick="updateOrderStatus('{{ order.id }}', 'Shipped')"
+                        class="w-full px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center">
+                        <i class="fas fa-shipping-fast mr-2"></i>
+                        Mark as Shipped
+                    </button>
+                    <button onclick="updateOrderStatus('{{ order.id }}', 'Delivered')"
+                        class="w-full px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center">
+                        <i class="fas fa-check-double mr-2"></i>
+                        Mark as Delivered
+                    </button>
+                    <button onclick="updateOrderStatus('{{ order.id }}', 'Cancelled')"
+                        class="w-full px-4 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors flex items-center justify-center">
+                        <i class="fas fa-times mr-2"></i>
+                        Cancel Order
+                    </button>
+                </div>
+            </div>
+
+            <!-- Order Timeline -->
+            <div class="bg-white rounded-xl shadow">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <h2 class="text-lg font-semibold text-gray-900">Order Timeline</h2>
+                </div>
+                <div class="p-6">
+                    <div class="space-y-4">
+                        <div class="flex items-start space-x-3">
+                            <div
+                                class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-check text-green-600 text-sm"></i>
+                            </div>
+                            <div>
+                                <p class="font-medium text-gray-900">Order Created</p>
+                                <p class="text-sm text-gray-500">{{ order.order_date.strftime('%b %d, %Y at %I:%M %p')
+                                    }}</p>
+                            </div>
+                        </div>
+
+                        {% if order.status in ['Confirmed', 'Processing', 'Shipped', 'Delivered'] %}
+                        <div class="flex items-start space-x-3">
+                            <div
+                                class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-check text-green-600 text-sm"></i>
+                            </div>
+                            <div>
+                                <p class="font-medium text-gray-900">Order Confirmed</p>
+                                <p class="text-sm text-gray-500">{{ order.order_date.strftime('%b %d, %Y at %I:%M %p')
+                                    }}</p>
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        {% if order.status in ['Processing', 'Shipped', 'Delivered'] %}
+                        <div class="flex items-start space-x-3">
+                            <div
+                                class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-check text-green-600 text-sm"></i>
+                            </div>
+                            <div>
+                                <p class="font-medium text-gray-900">Processing Started</p>
+                                <p class="text-sm text-gray-500">{{ order.order_date.strftime('%b %d, %Y at %I:%M %p')
+                                    }}</p>
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        {% if order.status in ['Shipped', 'Delivered'] %}
+                        <div class="flex items-start space-x-3">
+                            <div
+                                class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-check text-green-600 text-sm"></i>
+                            </div>
+                            <div>
+                                <p class="font-medium text-gray-900">Order Shipped</p>
+                                <p class="text-sm text-gray-500">{{ order.order_date.strftime('%b %d, %Y at %I:%M %p')
+                                    }}</p>
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        {% if order.status == 'Delivered' %}
+                        <div class="flex items-start space-x-3">
+                            <div
+                                class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-check text-green-600 text-sm"></i>
+                            </div>
+                            <div>
+                                <p class="font-medium text-gray-900">Order Delivered</p>
+                                <p class="text-sm text-gray-500">{{ order.order_date.strftime('%b %d, %Y at %I:%M %p')
+                                    }}</p>
+                            </div>
+                        </div>
+                        {% else %}
+                        <div class="flex items-start space-x-3">
+                            <div
+                                class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-clock text-gray-400 text-sm"></i>
+                            </div>
+                            <div>
+                                <p class="font-medium text-gray-900">Order Delivery</p>
+                                <p class="text-sm text-gray-500">Pending</p>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Customer Notes -->
+            <div class="bg-white rounded-xl shadow">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <h2 class="text-lg font-semibold text-gray-900">Customer Notes</h2>
+                </div>
+                <div class="p-6">
+                    <p class="text-gray-600 italic">No special instructions provided.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Success Notification -->
+<div id="successNotification"
+    class="fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg transform translate-x-full transition-transform duration-300 z-50">
+    <div class="flex items-center">
+        <i class="fas fa-check-circle mr-2"></i>
+        <span id="successMessage">Operation completed successfully!</span>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Print Order Function
+    function printOrder() {
+        window.print();
+    }
+
+    // Update Order Status
+    function updateOrderStatus(orderId, newStatus) {
+        if (!orderId) return;
+
+        // Show loading state
+        const buttons = document.querySelectorAll('button');
+        buttons.forEach(btn => btn.disabled = true);
+
+        // Make API call to update order status
+        fetch(`/edit_order/${orderId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                orderStatus: newStatus
+            })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification(`Order status updated to ${newStatus} successfully!`, 'success');
+                    // Reload page after a short delay to show updated status
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1500);
+                } else {
+                    showNotification(data.message || 'Error updating order status', 'error');
+                    buttons.forEach(btn => btn.disabled = false);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showNotification('Error updating order status. Please try again.', 'error');
+                buttons.forEach(btn => btn.disabled = false);
+            });
+    }
+
+    // Show Notification
+    function showNotification(message, type = 'success') {
+        const notification = document.getElementById('successNotification');
+        const messageElement = document.getElementById('successMessage');
+
+        messageElement.textContent = message;
+        if (type === 'error') {
+            notification.className = 'fixed top-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg transform translate-x-full transition-transform duration-300 z-50';
+        } else {
+            notification.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg transform translate-x-full transition-transform duration-300 z-50';
+        }
+
+        notification.classList.remove('translate-x-full');
+
+        setTimeout(() => {
+            notification.classList.add('translate-x-full');
+        }, 3000);
+    }
+
+    // Add print styles
+    const style = document.createElement('style');
+    style.textContent = `
+        @media print {
+            .bg-white { background: white !important; }
+            .shadow { box-shadow: none !important; }
+            .rounded-xl { border-radius: 0 !important; }
+            .border { border: 1px solid #000 !important; }
+            .text-gray-500 { color: #000 !important; }
+            .text-gray-600 { color: #000 !important; }
+            .text-gray-900 { color: #000 !important; }
+            .bg-gray-50 { background: #f8f8f8 !important; }
+            .bg-blue-100, .bg-green-100, .bg-purple-100, .bg-orange-100 { 
+                background: #f0f0f0 !important; 
+                color: #000 !important;
+            }
+            .flex { display: block !important; }
+            .grid { display: block !important; }
+            .space-y-6 > * { margin-bottom: 1.5rem !important; }
+            .p-6 { padding: 1rem !important; }
+            button, .bg-gray-600, .bg-blue-600 { display: none !important; }
+        }
+    `;
+    document.head.appendChild(style);
+</script>
+{% endblock %}

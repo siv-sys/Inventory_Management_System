@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+{% block title %}Create Sale - Inventory System{% endblock %}
+
+{% block content %}
+<div class="mb-8">
+    <div class="flex justify-between items-center">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-900">Create Sale</h1>
+            <p class="text-gray-600">Add products to complete a new sale</p>
+        </div>
+    </div>
+</div>
+
+<form method="POST" class="bg-white shadow rounded-xl p-6 space-y-6">
+    <!-- Sale Items -->
+    <div>
+        <h2 class="text-lg font-semibold mb-2">Products</h2>
+        <table class="min-w-full divide-y divide-gray-200 mb-4">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product
+                    </th>
+                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Price
+                    </th>
+                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Available</th>
+                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity
+                    </th>
+                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Subtotal
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody id="saleItemsBody" class="bg-white divide-y divide-gray-200">
+                <tr class="sale-item-row">
+                    <td class="px-6 py-4">
+                        <select name="product_id[]"
+                            class="product-select border border-gray-300 rounded-lg px-3 py-2 w-full">
+                            <option value="">Select product</option>
+                            {% for product in products %}
+                            <option value="{{ product.productid }}" data-price="{{ product.price }}"
+                                data-stock="{{ product.quantity }}">
+                                {{ product.productname }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                    <td class="px-6 py-4 text-right product-price">0.00</td>
+                    <td class="px-6 py-4 text-right product-stock">0</td>
+                    <td class="px-6 py-4 text-right">
+                        <input type="number" name="quantity[]" min="1" value="1"
+                            class="quantity-input border border-gray-300 rounded-lg px-2 py-1 w-20">
+                    </td>
+                    <td class="px-6 py-4 text-right product-subtotal">0.00</td>
+                    <td class="px-6 py-4 text-center">
+                        <button type="button" class="remove-row text-red-600 hover:text-red-900">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <button type="button" id="addRowBtn"
+            class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+            <i class="fas fa-plus mr-2"></i>Add Product
+        </button>
+    </div>
+
+    <!-- Total -->
+    <div class="text-right text-xl font-bold">
+        Total: $<span id="totalAmount">0.00</span>
+    </div>
+
+    <div>
+        <button type="submit" class="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">
+            Complete Sale
+        </button>
+    </div>
+</form>
+
+<script>
+    function updateRow(row) {
+        const select = row.querySelector(".product-select");
+        const priceCell = row.querySelector(".product-price");
+        const stockCell = row.querySelector(".product-stock");
+        const quantityInput = row.querySelector(".quantity-input");
+        const subtotalCell = row.querySelector(".product-subtotal");
+
+        const selectedOption = select.selectedOptions[0];
+        if (!selectedOption || !selectedOption.value) {
+            priceCell.textContent = "0.00";
+            stockCell.textContent = "0";
+            subtotalCell.textContent = "0.00";
+            calculateTotal();
+            return;
+        }
+
+        const price = parseFloat(selectedOption.dataset.price);
+        const stock = parseInt(selectedOption.dataset.stock);
+
+        priceCell.textContent = price.toFixed(2);
+        stockCell.textContent = stock;
+
+        let qty = parseInt(quantityInput.value);
+        if (qty > stock) quantityInput.value = stock;
+        subtotalCell.textContent = (price * quantityInput.value).toFixed(2);
+
+        calculateTotal();
+    }
+
+    function calculateTotal() {
+        let total = 0;
+        document.querySelectorAll(".sale-item-row").forEach(row => {
+            const subtotal = parseFloat(row.querySelector(".product-subtotal").textContent) || 0;
+            total += subtotal;
+        });
+        document.getElementById("totalAmount").textContent = total.toFixed(2);
+    }
+
+    // Event delegation
+    document.getElementById("saleItemsBody").addEventListener("change", function (e) {
+        if (e.target.classList.contains("product-select") || e.target.classList.contains("quantity-input")) {
+            updateRow(e.target.closest(".sale-item-row"));
+        }
+    });
+
+    document.getElementById("saleItemsBody").addEventListener("click", function (e) {
+        if (e.target.closest(".remove-row")) {
+            e.target.closest(".sale-item-row").remove();
+            calculateTotal();
+        }
+    });
+
+    document.getElementById("addRowBtn").addEventListener("click", function () {
+        const tbody = document.getElementById("saleItemsBody");
+        const newRow = tbody.querySelector(".sale-item-row").cloneNode(true);
+
+        newRow.querySelector(".product-select").value = "";
+        newRow.querySelector(".product-price").textContent = "0.00";
+        newRow.querySelector(".product-stock").textContent = "0";
+        newRow.querySelector(".quantity-input").value = 1;
+        newRow.querySelector(".product-subtotal").textContent = "0.00";
+
+        tbody.appendChild(newRow);
+    });
+</script>
+{% endblock %}

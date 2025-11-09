@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% block title %}Recent Orders - Inventory System{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <!-- Header -->
+    <div class="flex justify-between items-center">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-900">Recent Orders</h1>
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-6 gap-4">
+        <div class="bg-white rounded-xl shadow p-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-500">Total Orders</p>
+                    <p class="text-xl font-bold text-gray-900">{{ total_orders }}</p>
+                </div>
+                <div class="bg-blue-100 p-2 rounded-lg">
+                    <i class="fas fa-shopping-cart text-blue-600"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Orders Table -->
+    <div class="bg-white rounded-xl shadow overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+            <h2 class="text-lg font-semibold text-gray-900">All Orders</h2>
+            <div class="text-sm text-gray-500">
+                Showing {{ (page-1)*10 + 1 }} - {{ (page-1)*10 + orders|length }} of {{ total_orders }} orders
+            </div>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead>
+                    <tr class="bg-gray-50 border-b border-gray-200">
+                        <th class="px-6 py-3 text-left text-sm font-medium text-gray-500">Order ID</th>
+                        <th class="px-6 py-3 text-left text-sm font-medium text-gray-500">Product</th>
+                        <th class="px-6 py-3 text-left text-sm font-medium text-gray-500">Date</th>
+                        <th class="px-6 py-3 text-left text-sm font-medium text-gray-500">Quantity</th>
+                        <th class="px-6 py-3 text-left text-sm font-medium text-gray-500">Unit Price</th>
+                        <th class="px-6 py-3 text-left text-sm font-medium text-gray-500">Amount</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200" id="ordersTableBody">
+                    {% for order in orders %}
+                    <tr class="hover:bg-gray-50 transition-colors order-row" id="order-{{ order.stockid }}"
+                        data-status="{{ order.status }}">
+                        <td class="px-6 py-4">
+                            <div class="font-medium text-gray-900">{{ order.stockid }}</div>
+                        </td>
+                        <td class="px-6 py-4">
+                            <div class="font-medium text-gray-900">{{ order.productname }}</div>
+                            <div class="text-sm text-gray-500">{{ order.productcode }}</div>
+                        </td>
+                        <td class="px-6 py-4 text-gray-900">{{ order.recorddate }}</td>
+                        <td class="px-6 py-4 text-gray-900">{{ order.quantity|int }}</td>
+                        <td class="px-6 py-4 text-gray-900">${{ "%.2f"|format(order.price|float) }}</td>
+                        <td class="px-6 py-4">
+                            <div class="font-semibold text-gray-900">${{ "%.2f"|format((order.price|float) *
+                                (order.quantity|int)) }}</div>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" class="px-6 py-12 text-center">
+                            <div class="flex flex-col items-center justify-center">
+                                <i class="fas fa-shopping-cart text-6xl text-gray-300 mb-4"></i>
+                                <h3 class="text-lg font-medium text-gray-900 mb-2">No orders found</h3>
+                                <p class="text-gray-500 mb-4">Get started by creating your first order.</p>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="px-6 py-4 border-t border-gray-200 bg-gray-50">
+            <div class="flex justify-between items-center">
+                <div class="text-sm text-gray-500">
+                    Showing {{ (page-1)*10 + 1 }} - {{ (page-1)*10 + orders|length }} of {{ total_orders }} orders
+                </div>
+                <div class="flex space-x-2">
+                    <!-- Previous -->
+                    <a href="{{ url_for('order_detail', page=page-1) }}"
+                        class="px-4 py-2 text-sm font-medium {{ 'text-gray-300 bg-gray-100 cursor-not-allowed' if page <= 1 else 'text-gray-500 bg-white hover:bg-gray-50' }} border border-gray-300 rounded-lg transition-colors">
+                        Previous
+                    </a>
+
+                    <!-- Page Numbers -->
+                    {% for p in range(1, total_pages + 1) %}
+                    <a href="{{ url_for('order_detail', page=p) }}"
+                        class="px-4 py-2 text-sm font-medium {{ 'text-white bg-blue-600' if page == p else 'text-gray-500 bg-white hover:bg-gray-50' }} border border-gray-300 rounded-lg transition-colors">
+                        {{ p }}
+                    </a>
+                    {% endfor %}
+
+                    <!-- Next -->
+                    <a href="{{ url_for('order_detail', page=page+1) }}"
+                        class="px-4 py-2 text-sm font-medium {{ 'text-gray-300 bg-gray-100 cursor-not-allowed' if page >= total_pages else 'text-gray-500 bg-white hover:bg-gray-50' }} border border-gray-300 rounded-lg transition-colors">
+                        Next
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Optional: smooth scroll to top on page change
+    document.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    });
+</script>
+{% endblock %}

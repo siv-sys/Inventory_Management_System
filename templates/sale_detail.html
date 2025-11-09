@@ -1,0 +1,85 @@
+{% extends "base_print.html" %}
+{% block title %}Sale Detail - Inventory System{% endblock %}
+
+{% block content %}
+<div class="mb-8">
+    <div class="flex justify-between items-center mb-8">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-900">Sale Details</h1>
+            <p class="text-gray-600">View complete information for this sale</p>
+        </div>
+        <div class="flex space-x-2">
+            <a href="{{ url_for('sale') }}" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition">
+                <i class="fas fa-arrow-left mr-2"></i>Back to Sales
+            </a>
+            <button onclick="window.print()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                <i class="fas fa-print mr-2"></i>Print
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Sale Summary -->
+<div class="bg-white shadow rounded-xl p-6 mb-6">
+    <div class="grid md:grid-cols-2 gap-6">
+        <div>
+            <h2 class="text-lg font-semibold text-gray-900 mb-2">Customer Information</h2>
+            <p><span class="font-medium text-gray-700">Date:</span> {{ sale_info.date }}</p>
+        </div>
+        <div>
+            <h2 class="text-lg font-semibold text-gray-900 mb-2">Sale Info</h2>
+            <p><span class="font-medium text-gray-700">Sale ID:</span> #{{ sale_info.id }}</p>
+            <p><span class="font-medium text-gray-700">Status:</span>
+                {% if sale_info.status == "Completed" %}
+                <span class="px-3 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Completed</span>
+                {% elif sale_info.status == "Pending" %}
+                <span class="px-3 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">Pending</span>
+                {% else %}
+                <span class="px-3 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">Cancelled</span>
+                {% endif %}
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- Sale Items Table -->
+<div class="bg-white shadow rounded-xl overflow-hidden">
+    <div class="px-6 py-4 border-b border-gray-200">
+        <h2 class="text-lg font-semibold text-gray-900">Items Sold</h2>
+    </div>
+    <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product</th>
+                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
+                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
+                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Discount</th>
+                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Subtotal</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+                {% for item in sale_items %}
+                <tr>
+                    <td class="px-6 py-4 text-sm font-medium text-gray-900">{{ item.productname }}</td>
+                    <td class="px-6 py-4 text-sm text-gray-600 text-right">{{ item.quantity|int }}</td>
+                    <td class="px-6 py-4 text-sm text-gray-600 text-right">${{ "%.2f"|format(item.price|float) }}</td>
+                    <td class="px-6 py-4 text-sm text-gray-600 text-right">{{ item.discount|float }} %</td>
+                    <td class="px-6 py-4 text-sm text-gray-900 text-right font-semibold">
+                        ${{ "%.2f"|format((item.quantity|int) * (item.price|float) - ((item.quantity|int) * (item.price|float) * (item.discount|float) / 100)) }}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Footer Summary -->
+    <div class="px-6 py-4 border-t bg-gray-50 flex justify-end">
+        <div class="text-right">
+            <p class="text-gray-700 text-sm">Total:</p>
+            <p class="text-2xl font-bold text-green-600">${{ "%.2f"|format(sale_info.total) }}</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
