@@ -4,74 +4,126 @@
 
 {% block content %}
 <div class="space-y-6">
-    <!-- Header -->
+    <!-- Animated Header -->
     <div class="flex justify-between items-center">
-        <div>
-            <h1 class="text-3xl font-bold text-gray-900">Recent Orders</h1>
+        <div class="transform transition-all duration-300 hover:scale-105">
+            <h1 class="text-3xl font-bold text-gray-900 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Recent Orders</h1>
+            <p class="text-gray-500 mt-2 animate-pulse">Real-time order tracking and management</p>
         </div>
     </div>
 
-    <!-- Stats Cards -->
+    <!-- Enhanced Stats Cards with Hover Effects -->
     <div class="grid grid-cols-1 md:grid-cols-6 gap-4">
-        <div class="bg-white rounded-xl shadow p-4">
+        <div class="bg-white rounded-xl shadow-lg p-4 transform transition-all duration-300 hover:shadow-xl hover:-translate-y-1 border-l-4 border-blue-500">
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm text-gray-500">Total Orders</p>
                     <p class="text-xl font-bold text-gray-900">{{ total_orders }}</p>
                 </div>
-                <div class="bg-blue-100 p-2 rounded-lg">
-                    <i class="fas fa-shopping-cart text-blue-600"></i>
+                <div class="bg-gradient-to-br from-blue-100 to-blue-200 p-3 rounded-lg shadow-inner">
+                    <i class="fas fa-shopping-cart text-blue-600 animate-bounce"></i>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Orders Table -->
-    <div class="bg-white rounded-xl shadow overflow-hidden">
-        <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
-            <h2 class="text-lg font-semibold text-gray-900">All Orders</h2>
-            <div class="text-sm text-gray-500">
-                Showing {{ (page-1)*10 + 1 }} - {{ (page-1)*10 + orders|length }} of {{ total_orders }} orders
+    <!-- Orders Table with Enhanced Visual Design -->
+    <div class="bg-white rounded-xl shadow-lg overflow-hidden transform transition-all duration-300 hover:shadow-xl">
+        <div class="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-white flex justify-between items-center">
+            <h2 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                <i class="fas fa-list-alt text-blue-500"></i>
+                All Orders
+            </h2>
+            <div class="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full shadow-sm">
+                Showing <span class="font-bold text-blue-600">{{ (page-1)*10 + 1 }}</span> - 
+                <span class="font-bold text-blue-600">{{ (page-1)*10 + orders|length }}</span> of 
+                <span class="font-bold text-purple-600">{{ total_orders }}</span> orders
             </div>
         </div>
         <div class="overflow-x-auto">
             <table class="w-full">
                 <thead>
-                    <tr class="bg-gray-50 border-b border-gray-200">
-                        <th class="px-6 py-3 text-left text-sm font-medium text-gray-500">Order ID</th>
-                        <th class="px-6 py-3 text-left text-sm font-medium text-gray-500">Product</th>
-                        <th class="px-6 py-3 text-left text-sm font-medium text-gray-500">Date</th>
-                        <th class="px-6 py-3 text-left text-sm font-medium text-gray-500">Quantity</th>
-                        <th class="px-6 py-3 text-left text-sm font-medium text-gray-500">Unit Price</th>
-                        <th class="px-6 py-3 text-left text-sm font-medium text-gray-500">Amount</th>
+                    <tr class="bg-gradient-to-r from-gray-50 to-gray-100 border-b-2 border-gray-200">
+                        <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">
+                            <i class="fas fa-hashtag mr-2 text-blue-500"></i>Order ID
+                        </th>
+                        <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">
+                            <i class="fas fa-cube mr-2 text-green-500"></i>Product
+                        </th>
+                        <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">
+                            <i class="fas fa-calendar mr-2 text-purple-500"></i>Date
+                        </th>
+                        <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">
+                            <i class="fas fa-boxes mr-2 text-orange-500"></i>Quantity
+                        </th>
+                        <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">
+                            <i class="fas fa-boxes mr-2 text-orange-500"></i>Supply's name
+                        </th>
+                        <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">
+                            <i class="fas fa-tag mr-2 text-red-500"></i>Unit Price
+                        </th>
+                        <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">
+                            <i class="fas fa-money-bill-wave mr-2 text-green-500"></i>Amount
+                        </th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-200" id="ordersTableBody">
+                <tbody class="divide-y divide-gray-200 bg-gradient-to-b from-white to-gray-50" id="ordersTableBody">
                     {% for order in orders %}
-                    <tr class="hover:bg-gray-50 transition-colors order-row" id="order-{{ order.stockid }}"
-                        data-status="{{ order.status }}">
+                    <tr class="hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 transition-all duration-300 transform hover:scale-[1.01] order-row border-l-4 border-transparent hover:border-blue-400"
+                        id="order-{{ order.stockid }}" data-status="{{ order.status }}">
                         <td class="px-6 py-4">
-                            <div class="font-medium text-gray-900">{{ order.stockid }}</div>
+                            <div class="font-bold text-gray-900 bg-gray-100 px-2 py-1 rounded-lg inline-block">
+                                #{{ order.stockid }}
+                            </div>
                         </td>
                         <td class="px-6 py-4">
-                            <div class="font-medium text-gray-900">{{ order.productname }}</div>
-                            <div class="text-sm text-gray-500">{{ order.productcode }}</div>
+                            <div class="font-semibold text-gray-900 flex items-center gap-2">
+                                <i class="fas fa-box text-blue-500"></i>
+                                {{ order.productname }}
+                            </div>
+                            <div class="text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded mt-1 inline-block">
+                                {{ order.productcode }}
+                            </div>
                         </td>
-                        <td class="px-6 py-4 text-gray-900">{{ order.recorddate }}</td>
-                        <td class="px-6 py-4 text-gray-900">{{ order.quantity|int }}</td>
-                        <td class="px-6 py-4 text-gray-900">${{ "%.2f"|format(order.price|float) }}</td>
                         <td class="px-6 py-4">
-                            <div class="font-semibold text-gray-900">${{ "%.2f"|format((order.price|float) *
-                                (order.quantity|int)) }}</div>
+                            <div class="text-gray-900 font-medium bg-purple-50 px-3 py-2 rounded-lg text-center">
+                                {{ order.recorddate }}
+                            </div>
+                        </td>
+                        <td class="px-6 py-4">
+                            <div class="text-gray-900 font-bold text-lg bg-orange-50 px-3 py-2 rounded-lg text-center inline-block min-w-[60px]">
+                                {{ order.quantity|int }}
+                            </div>
+                        </td>
+                        <td class="px-6 py-4">
+                            <div class="text-gray-900 font-bold text-lg bg-blue-50 px-3 py-2 rounded-lg text-center inline-block min-w-[60px]">
+                                {{ order.nickname }}
+                            </div>
+                        </td>
+                        <td class="px-6 py-4">
+                            <div class="text-gray-900 font-semibold bg-red-50 px-3 py-2 rounded-lg text-center">
+                                ${{ "%.2f"|format(order.price|float) }}
+                            </div>
+                        </td>
+                        <td class="px-6 py-4">
+                            <div class="font-bold text-green-600 text-lg bg-gradient-to-r from-green-50 to-emerald-50 px-4 py-3 rounded-lg text-center shadow-sm">
+                                ${{ "%.2f"|format((order.price|float) * (order.quantity|int)) }}
+                            </div>
                         </td>
                     </tr>
                     {% else %}
                     <tr>
-                        <td colspan="6" class="px-6 py-12 text-center">
-                            <div class="flex flex-col items-center justify-center">
-                                <i class="fas fa-shopping-cart text-6xl text-gray-300 mb-4"></i>
-                                <h3 class="text-lg font-medium text-gray-900 mb-2">No orders found</h3>
-                                <p class="text-gray-500 mb-4">Get started by creating your first order.</p>
+                        <td colspan="6" class="px-6 py-16 text-center bg-gradient-to-br from-gray-50 to-blue-50">
+                            <div class="flex flex-col items-center justify-center transform transition-all duration-500 hover:scale-105">
+                                <div class="relative">
+                                    <i class="fas fa-shopping-cart text-6xl text-gray-300 mb-4 animate-pulse"></i>
+                                    <div class="absolute -top-2 -right-2 w-6 h-6 bg-blue-500 rounded-full animate-ping"></div>
+                                </div>
+                                <h3 class="text-xl font-bold text-gray-900 mb-3 bg-gradient-to-r from-gray-700 to-gray-900 bg-clip-text text-transparent">No orders found</h3>
+                                <p class="text-gray-500 mb-6 max-w-md">Start building your order history by creating your first purchase order.</p>
+                                <div class="bg-blue-100 border border-blue-200 rounded-xl px-6 py-4">
+                                    <p class="text-blue-700 text-sm font-medium">💡 Tip: Orders will appear here once created</p>
+                                </div>
                             </div>
                         </td>
                     </tr>
@@ -80,31 +132,33 @@
             </table>
         </div>
 
-        <!-- Pagination -->
-        <div class="px-6 py-4 border-t border-gray-200 bg-gray-50">
+        <!-- Enhanced Pagination -->
+        <div class="px-6 py-4 border-t border-gray-200 bg-gradient-to-r from-gray-50 to-gray-100">
             <div class="flex justify-between items-center">
-                <div class="text-sm text-gray-500">
-                    Showing {{ (page-1)*10 + 1 }} - {{ (page-1)*10 + orders|length }} of {{ total_orders }} orders
+                <div class="text-sm text-gray-600 bg-white px-4 py-2 rounded-lg shadow-sm border">
+                    Displaying <span class="font-bold text-blue-600">{{ (page-1)*10 + 1 }}</span> - 
+                    <span class="font-bold text-blue-600">{{ (page-1)*10 + orders|length }}</span> of 
+                    <span class="font-bold text-purple-600">{{ total_orders }}</span> orders
                 </div>
                 <div class="flex space-x-2">
-                    <!-- Previous -->
-                    <a href="{{ url_for('order_detail', page=page-1) }}"
-                        class="px-4 py-2 text-sm font-medium {{ 'text-gray-300 bg-gray-100 cursor-not-allowed' if page <= 1 else 'text-gray-500 bg-white hover:bg-gray-50' }} border border-gray-300 rounded-lg transition-colors">
-                        Previous
+                    <!-- Previous Button -->
+                    <a href="{{ url_for('order_detail', page=page-1 )}}"
+                        class="px-4 py-2 text-sm font-medium rounded-lg transition-all duration-300 transform hover:scale-105 {{ 'text-gray-400 bg-gray-100 cursor-not-allowed border border-gray-300' if page <= 1 else 'text-gray-700 bg-white hover:bg-blue-50 hover:text-blue-600 border border-gray-300 hover:border-blue-300 shadow-sm' }}">
+                        <i class="fas fa-chevron-left mr-2"></i>Previous
                     </a>
 
                     <!-- Page Numbers -->
                     {% for p in range(1, total_pages + 1) %}
                     <a href="{{ url_for('order_detail', page=p) }}"
-                        class="px-4 py-2 text-sm font-medium {{ 'text-white bg-blue-600' if page == p else 'text-gray-500 bg-white hover:bg-gray-50' }} border border-gray-300 rounded-lg transition-colors">
+                        class="px-4 py-2 text-sm font-medium rounded-lg transition-all duration-300 transform hover:scale-110 {{ 'text-white bg-gradient-to-r from-blue-600 to-purple-600 shadow-lg border border-blue-500' if page == p else 'text-gray-700 bg-white hover:bg-gray-50 border border-gray-300 hover:border-gray-400 shadow-sm' }}">
                         {{ p }}
                     </a>
                     {% endfor %}
 
-                    <!-- Next -->
+                    <!-- Next Button -->
                     <a href="{{ url_for('order_detail', page=page+1) }}"
-                        class="px-4 py-2 text-sm font-medium {{ 'text-gray-300 bg-gray-100 cursor-not-allowed' if page >= total_pages else 'text-gray-500 bg-white hover:bg-gray-50' }} border border-gray-300 rounded-lg transition-colors">
-                        Next
+                        class="px-4 py-2 text-sm font-medium rounded-lg transition-all duration-300 transform hover:scale-105 {{ 'text-gray-400 bg-gray-100 cursor-not-allowed border border-gray-300' if page >= total_pages else 'text-gray-700 bg-white hover:bg-blue-50 hover:text-blue-600 border border-gray-300 hover:border-blue-300 shadow-sm' }}">
+                        Next<i class="fas fa-chevron-right ml-2"></i>
                     </a>
                 </div>
             </div>
@@ -116,11 +170,78 @@
 
 {% block scripts %}
 <script>
-    // Optional: smooth scroll to top on page change
-    document.querySelectorAll('a').forEach(link => {
-        link.addEventListener('click', () => {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Enhanced animations and interactions
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add staggered animation to table rows
+        const rows = document.querySelectorAll('.order-row');
+        rows.forEach((row, index) => {
+            row.style.animationDelay = `${index * 0.1}s`;
+            row.classList.add('animate-fade-in-up');
+        });
+
+        // Smooth scroll to top on page change with enhanced animation
+        document.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                if (link.getAttribute('href').includes('page=')) {
+                    e.preventDefault();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    setTimeout(() => {
+                        window.location.href = link.getAttribute('href');
+                    }, 500);
+                }
+            });
+        });
+
+        // Add hover sound effect (optional)
+        const interactiveElements = document.querySelectorAll('a, button, .order-row');
+        interactiveElements.forEach(element => {
+            element.addEventListener('mouseenter', () => {
+                element.style.transform = 'translateY(-2px)';
+            });
+            element.addEventListener('mouseleave', () => {
+                element.style.transform = 'translateY(0)';
+            });
         });
     });
 </script>
+
+<style>
+    @keyframes fade-in-up {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .animate-fade-in-up {
+        animation: fade-in-up 0.6s ease-out forwards;
+    }
+    
+    .order-row {
+        opacity: 0;
+    }
+    
+    /* Custom scrollbar for table */
+    .overflow-x-auto::-webkit-scrollbar {
+        height: 8px;
+    }
+    
+    .overflow-x-auto::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+    }
+    
+    .overflow-x-auto::-webkit-scrollbar-thumb {
+        background: linear-gradient(to right, #3b82f6, #8b5cf6);
+        border-radius: 10px;
+    }
+    
+    .overflow-x-auto::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(to right, #2563eb, #7c3aed);
+    }
+</style>
 {% endblock %}

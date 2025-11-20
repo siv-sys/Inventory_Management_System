@@ -43,7 +43,7 @@
                         class="text-gray-600 hover:text-blue-600 font-medium {% if request.endpoint == 'dashboard' %}text-blue-600{% endif %}">
                         <i class="fas fa-tachometer-alt mr-3"></i>Dashboard
                     </a>
-                    <a href="{{url_for('sale')}}"
+                    <a href="{{url_for('sale_mgt.sale')}}"
                         class="text-gray-600 hover:text-blue-600 font-medium {% if request.endpoint == 'dashboard' %}text-blue-600{% endif %}">
                         <i class="fas fa-tachometer-alt mr-3"></i>Sale
                     </a>
@@ -130,7 +130,7 @@
     </div>
 
     <!-- Main Content -->
-    <main class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+    <main class="max-w-8xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
         <!-- Flash Messages -->
         {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}

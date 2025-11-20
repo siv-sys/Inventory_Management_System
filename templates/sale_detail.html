@@ -9,7 +9,7 @@
             <p class="text-gray-600">View complete information for this sale</p>
         </div>
         <div class="flex space-x-2">
-            <a href="{{ url_for('sale') }}" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition">
+            <a href="{{ url_for('sale_mgt.sale') }}" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition">
                 <i class="fas fa-arrow-left mr-2"></i>Back to Sales
             </a>
             <button onclick="window.print()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
@@ -18,7 +18,6 @@
         </div>
     </div>
 </div>
-
 <!-- Sale Summary -->
 <div class="bg-white shadow rounded-xl p-6 mb-6">
     <div class="grid md:grid-cols-2 gap-6">

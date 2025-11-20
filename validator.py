@@ -18,7 +18,7 @@ def validatuser():
 
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
-        
+
         cursor.execute("SELECT * FROM users WHERE userid=%s AND email=%s AND password=%s AND user_disable=0",(decode_payload["userid"],decode_payload["email"],decode_payload["password"]))
         result = cursor.fetchone()
         if result:
@@ -30,12 +30,12 @@ def validatuser():
         print("Token expired")
         session.pop("token", None)
         return True
-    
+
     except InvalidTokenError:
         print("Invalid token")
         session.pop("token", None)
         return True
-    
+
 def validate_for_admin():
     try:
         if "token" not in session:
@@ -45,7 +45,7 @@ def validate_for_admin():
 
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
-        
+
         cursor.execute("SELECT * FROM users WHERE userid=%s AND email=%s AND password=%s AND level='Admin' AND user_disable=0",(decode_payload["userid"],decode_payload["email"],decode_payload["password"]))
         result = cursor.fetchone()
         if result:
@@ -57,7 +57,7 @@ def validate_for_admin():
         print("Token expired")
         session.pop("token", None)
         return True
-    
+
     except InvalidTokenError:
         print("Invalid token")
         session.pop("token", None)
