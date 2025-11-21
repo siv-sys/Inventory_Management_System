@@ -1,0 +1,6 @@
+Flask
+mysql-connector-python
+python-dotenv
+PyJWT
+
+# add any other pip packages your app uses
