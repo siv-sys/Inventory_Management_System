@@ -1,8 +1,17 @@
-# Use Nginx as a lightweight web server
-FROM nginx:alpine
+# Use official Python image
+FROM python:3.10-slim
 
-# Copy your website files into Nginx default directory
-COPY . /usr/share/nginx/html
+# Set working directory
+WORKDIR /app
 
-# Expose port 80 to the web
-EXPOSE 80
+# Copy project files
+COPY . .
+
+# Install dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Expose Flask default port
+EXPOSE 5000
+
+# Run the app
+CMD ["python", "app.py"]
