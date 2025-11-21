@@ -562,5 +562,5 @@ def order_detail():
 #     return render_template("sale_list.html",sale_list=sale_list,page=page,total_pages=total_pages,total_orders=total_orders)
 
 if __name__ == "__main__":
-    app.run(debug=True)
     app.run(host="0.0.0.0", port=5000)
+
